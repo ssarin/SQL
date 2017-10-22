@@ -1,0 +1,280 @@
+Spool /class/cm320m/07/create_table.txt;
+set echo on
+set feedback on
+drop table CUSTOMERS cascade constraints;
+drop table RENTAL cascade constraints;
+drop table ACADEMY_AWARD cascade constraints;
+drop table DIRECTOR cascade constraints;
+drop table ACTOR cascade constraints;
+drop table MOVIE cascade constraints;
+drop table ACADEMY_AWARD_MOVIE cascade constraints;
+drop table DIRECTOR_MOVIE cascade constraints;
+drop table ACTOR_MOVIE cascade constraints;
+drop table DISTRIBUTOR cascade constraints;
+drop table DISTRIBUTOR_CATALOG cascade constraints;
+drop table STORE cascade constraints;
+drop table MOVIE_INVENTORY cascade constraints;
+drop table MOVIES_RENTED cascade constraints;
+
+--Surtej Sarin, CMIS320, Mom and Pop Johnson Video Store database 
+
+--Create tables
+
+create table Customers (
+Customer_ID number(10) NOT NULL,
+First_name VARCHAR2(20) NOT NULL,
+Last_name VARCHAR2(20) NOT NULL,
+Phone_number VARCHAR2(10) UNIQUE,
+Address VARCHAR2(50),
+PRIMARY KEY (Customer_ID)
+);
+
+create table Store (
+Store_ID number(10) NOT NULL,
+Address VARCHAR2(50),
+Owner VARCHAR2(30) NOT NULL,
+Phone_number VARCHAR2(10) UNIQUE,
+PRIMARY KEY (Store_ID)
+);
+
+
+create table Distributor (
+Distributor_ID number(10) NOT NULL,
+Name VARCHAR2(30) NOT NULL,
+Shipment_quantity number(10) NOT NULL,
+Description_past_business VARCHAR2(30),
+PRIMARY KEY (Distributor_ID)
+);
+
+create table Actor (
+Actor_ID number(10) NOT NULL,
+First_name VARCHAR2(20) NOT NULL,
+Last_name VARCHAR2(20) NOT NULL,
+PRIMARY KEY (Actor_ID)
+);
+
+
+create table Director(
+Director_ID number(10) NOT NULL,
+First_name VARCHAR2(20) NOT NULL,
+Last_name VARCHAR2(20) NOT NULL,
+PRIMARY KEY (Director_ID)
+);
+
+
+
+create table Academy_award (
+Academy_award_ID number(10) NOT NULL,
+Year number(4) NOT NULL,
+Category VARCHAR2(20) NOT NULL,
+PRIMARY KEY (Academy_award_ID)
+);
+
+
+create table Rental (
+Rental_ID number(10) NOT NULL,
+Customer_ID number(10) NOT NULL,
+Total_cost decimal(16,2) NOT NULL,
+PRIMARY KEY (Rental_ID),
+FOREIGN KEY (Customer_ID) REFERENCES Customers (Customer_ID)
+);
+
+create table Movie (
+Movie_ID number(10) NOT NULL,
+Movie_title VARCHAR2(30) NOT NULL,
+Year_released number(4) NOT NULL,
+Running_length number(5) NOT NULL,
+Genre VARCHAR2(30) NOT NULL,
+Rating decimal(16,2),
+DVD_or_Video VARCHAR2(10) NOT NULL,
+PRIMARY KEY (Movie_ID)
+);
+
+
+create table Distributor_catalog (
+Distributor_catalog_ID number(10) NOT NULL,
+Distributor_ID number(10) NOT NULL,
+Movie_ID number(10) NOT NULL,
+Serial_number VARCHAR2(30) NOT NULL,
+Wholesale_amount decimal(16,2),
+PRIMARY KEY (Distributor_catalog_ID),
+FOREIGN KEY (Distributor_ID) REFERENCES Distributor (Distributor_ID),
+FOREIGN KEY (Movie_ID) REFERENCES Movie (Movie_ID)
+);
+
+create table Movie_inventory (
+Movie_inventory_ID number(10) NOT NULL,
+Store_ID number(10) NOT NULL,
+Distributor_catalog_ID number(10) NOT NULL,
+PRIMARY KEY (Movie_inventory_ID),
+FOREIGN KEY (Store_ID) REFERENCES Store (Store_ID),
+FOREIGN KEY (Distributor_catalog_ID) REFERENCES Distributor_catalog (Distributor_catalog_ID)
+);
+
+create table Movies_rented (
+Movies_rented_ID number(10) NOT NULL,
+Rental_ID number(10) NOT NULL,
+Movie_inventory_ID number(10) NOT NULL,
+Date_rented VARCHAR2(20),
+Date_returned VARCHAR2(20),
+Rental_cost decimal(16,2) NOT NULL,
+Discount decimal(16,2),
+Tax decimal(16,2),
+Late_fee decimal(16,2),
+Damaged_fee decimal(16,2),
+Failure_to_rewind_fee decimal(16,2),
+PRIMARY KEY (Movies_rented_ID),
+FOREIGN KEY (Rental_ID) REFERENCES Rental (Rental_ID),
+FOREIGN KEY (Movie_inventory_ID) REFERENCES Movie_inventory (Movie_inventory_ID)
+);
+
+
+create table Actor_movie (
+Actor_movie_ID number(10) NOT NULL,
+Actor_ID_FK number(10) NOT NULL,
+Movie_ID_FK number(10) NOT NULL,
+PRIMARY KEY (Actor_movie_ID),
+FOREIGN KEY (Actor_ID_FK) REFERENCES Actor (Actor_ID),
+FOREIGN KEY (Movie_ID_FK) REFERENCES Movie (Movie_ID)
+);
+
+create table Director_movie (
+Director_movie_ID number (10) NOT NULL,
+Director_ID_FK number (10) NOT NULL,
+Movie_ID_FK number (10) NOT NULL,
+PRIMARY KEY (Director_movie_ID),
+FOREIGN KEY (Director_ID_FK) REFERENCES Director (Director_ID),
+FOREIGN KEY (Movie_ID_FK) REFERENCES Movie (Movie_ID)
+);
+
+create table Academy_award_movie (
+Academy_award_movie_ID number(10) NOT NULL,
+Academy_award_ID_FK number (10) NOT NULL,
+Movie_ID_FK number(10) NOT NULL,
+PRIMARY KEY (Academy_award_movie_ID),
+FOREIGN KEY (Academy_award_ID_FK) REFERENCES Academy_award (Academy_award_ID),
+FOREIGN KEY (Movie_ID_FK) REFERENCES Movie (Movie_ID)
+);
+
+-- Insert statements
+
+insert into Customers values (1, 'Arnetta', 'Sussman', '2405551212', '123 6th St. Melbourne, FL 32904');
+insert into Customers values (2, 'George', 'Motton', '3012341111', '71 Pilgrim Avenue Chevy Chase, MD 20815');
+insert into Customers values (3, 'Madonna', 'Overturf', '2025542074', '70 Bowman St. South Windsor, CT 06074');
+insert into Customers values (4, 'Jess', 'Haugh', '4752221113', '514 S. Magnolia St. Orlando, FL 32806');
+insert into Customers values (5, 'Lizzie', 'Hank', '2014551331', '44 Shirley Ave. West Chicago, IL 60185');
+
+insert into Store values (1, '300 Lantern St. Maplewood, NJ 07040', 'John J. Jacob', '7704422211');
+insert into Store values (2, '9186 Bayport Street Auburn, NY 13021', 'Natalia Gammon', '5551112222');
+insert into Store values (3, '27 Wentworth Street Flowery Branch, GA 30542', 'Gena Iorio', '7701216666');
+insert into Store values (4, '212 South Edgemont Dr. Ridgefield, CT 06877', 'Antione Krom', '3314405252');
+insert into Store values (5, '893 Wrangler Ave. Saratoga Springs, NY 12866', 'Jeanmarie Brochu', '5553332211');
+
+insert into Distributor values (1, 'Music Box Films', 20, 'Good');
+insert into Distributor values (2, 'Cinema Epoch', 5, 'Great');
+insert into Distributor values (3, 'Phase 4 Films', 35, 'Good');
+insert into Distributor values (4, 'Reliance Entertainment', 2, 'Great');
+insert into Distributor values (5, 'Picturehouse', 15, 'Okay');
+
+insert into Actor values (1, 'Johnny', 'Depp');
+insert into Actor values (2, 'Helena', 'Bonham Carter');
+insert into Actor values (3, 'Tom', 'Cruise');
+insert into Actor values (4, 'Jennifer', 'Lawrence');
+insert into Actor values (5, 'Emma', 'Stone');
+
+insert into Director values (1, 'Steven', 'Spielberg');
+insert into Director values (2, 'Tim', 'Burton');
+insert into Director values (3, 'Martin', 'Scorsese');
+insert into Director values (4, 'Peter', 'Jackson');
+insert into Director values (5, 'James', 'Cameron');
+
+insert into Academy_award values (1, 1994, 'Best Picture');
+insert into Academy_award values (2, 2016, 'Best Director');
+insert into Academy_award values (3, 2010, 'Best Picture');
+insert into Academy_award values (4, 2004, 'Best Picture');
+insert into Academy_award values (5, 1990, 'Best Director');
+
+insert into Rental values (1, 1, 20.99);
+insert into Rental values (2, 2, 68.99);
+insert into Rental values (3, 3, 4.99);
+insert into Rental values (4, 4, 15.99);
+insert into Rental values (5, 5, 19.99);
+
+insert into Movie values (1, 'American Assassin', 2017, 112, 'Thriller/Action', 6.7, 'Video');
+insert into Movie values (2, 'Inception', 2010, 148, 'Action', 8.8, 'DVD');
+insert into Movie values (3, 'La La Land', 2016, 128, 'Comedy', 8.2, 'Video');
+insert into Movie values (4, 'The Revenant', 2015, 156, 'Western', 8.0, 'Video');
+insert into Movie values (5, 'Sinister', 2012, 110, 'Horror', 6.8, 'DVD');
+
+insert into Distributor_catalog values (1, 1, 1, 'N9TT-9G0A-B7FQ-RANC', 250.19);
+insert into Distributor_catalog values (2, 2, 2, 'QK6A-JI6S-7ETR-0A6C', 120.25);
+insert into Distributor_catalog values (3, 3, 3, 'SXFP-CHYK-ONI6-S89U', 550.49);
+insert into Distributor_catalog values (4, 4, 4, 'XNSS-HSJW-3NGU-8XTJ', 70.71);
+insert into Distributor_catalog values (5, 5, 5, '2E62-E3SR-33FI-XHV3', 420.20);
+
+insert into Movie_inventory values (1, 1, 1);
+insert into Movie_inventory values (2, 2, 2);
+insert into Movie_inventory values (3, 3, 3);
+insert into Movie_inventory values (4, 4, 4);
+insert into Movie_inventory values (5, 5, 5);
+
+insert into Movies_rented values (1, 1, 1, '08-12-2017', NULL, 21.99, NULL, 2.99, NULL, NULL, NULL);
+insert into Movies_rented values (2, 2, 2, '05-06-2016', '09-26-2017', 80.75, 5.55, 2.99, 20.11, 7.99, 2.10);
+insert into Movies_rented values (3, 3, 3, '02-20-2012', NULL, 120.99, NULL, 2.99, NULL, NULL, NULL);
+insert into Movies_rented values (4, 4, 4, '08-10-2015', '09-26-2016', 77.19, 10.99, 4.99, 31.99, NULL, 20.11);
+insert into Movies_rented values (5, 5, 5, '04-15-2017', NULL, 33.45, NULL, 7.99, NULL, NULL, NULL);
+
+insert into Actor_movie values (1, 1, 1);
+insert into Actor_movie values (2, 2, 2);
+insert into Actor_movie values (3, 3, 3);
+insert into Actor_movie values (4, 4, 4);
+insert into Actor_movie values (5, 5, 5);
+
+insert into Director_movie values (1, 1, 1);
+insert into Director_movie values (2, 2, 2);
+insert into Director_movie values (3, 3, 3);
+insert into Director_movie values (4, 4, 4);
+insert into Director_movie values (5, 5, 5);
+
+insert into Academy_award_movie values (1, 1, 1);
+insert into Academy_award_movie values (2, 2, 2);
+insert into Academy_award_movie values (3, 3, 3);
+insert into Academy_award_movie values (4, 4, 4);
+insert into Academy_award_movie values (5, 5, 5);
+
+-- Queries and updates
+
+-- Retrieve all of your customers' names, account numbers, and addresses (street and zip code only), sorted by account number.
+SELECT Customer_ID, First_name, Last_name, Address FROM Customers ORDER BY Customer_ID;
+
+-- Retrieve all of the videos rented in the last 30 days and sort in chronological rental date order.
+
+SELECT mov.Movie_title, ren.Date_rented
+  from Movie mov
+  join Distributor_catalog dis
+    on mov.Movie_ID = dis.Movie_ID
+  join Movie_inventory movieInv
+    on dis.Distributor_catalog_ID = movieInv.Distributor_catalog_ID
+  join Movies_rented ren
+    on movieInv.Movie_inventory_ID = ren.Movie_inventory_ID
+ where ren.Date_rented >= to_char(trunc(sysdate) - 30, 'MM-DD-YYYY')
+ order by ren.Date_rented;
+ commit;
+
+-- Produce a list of your distributors and all their information sorted in order by company name. 
+SELECT Distributor_ID, Name, Shipment_quantity, Description_past_business FROM Distributor ORDER BY Name;
+
+-- Update a customer name to change their maiden name to a married name. You can choose which row to update.  Make sure that you use the primary key column in your WHERE clause to affect only a specific row.  You may want to include a ROLLBACK statement to undo your data update.
+UPDATE Customers SET Last_name = 'Ciccone' WHERE Customer_ID = 3;
+SELECT * FROM Customers;
+
+-- Delete a customer from the database. You can choose which row to delete. Make sure that you use the primary key column in your WHERE clause to affect only a specific row.  You may want to include a ROLLBACK statement to undo your data deletion.
+
+DELETE FROM Rental WHERE Customer_ID = 5;
+DELETE FROM Customers WHERE Customer_ID = 5;
+SELECT * FROM Customers;
+
+spool off
+
+
+
